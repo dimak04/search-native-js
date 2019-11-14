@@ -1,33 +1,39 @@
-const locale_HTML = document.getElementById("content").innerHTML;
+const localeHTML = document.getElementById("content").innerHTML;
 const textInput = document.getElementById("keyword");
 
 function UniqArray(arr) {
-  let end_arr = new Set(arr);
-  end_arr.delete("");
-  return end_arr;
+  let endArr = new Set(arr);
+  endArr.delete("");
+  return endArr;
 }
 
 function FindOnPage() {
   const input = textInput.value;
-  let input_arr = input.split(/[ ]/);
-  input_arr = UniqArray(input_arr);
-  const search_area = document.getElementById("content").innerText;
-  let pr = document.getElementById("content").innerHTML;
-  let array_search = search_area.split(/[\s]/);
-  let mark_array = [];
-  for (let i = 0; i < array_search.length; i++) {
-    mark_array[i] = array_search[i];
-    input_arr.forEach(function(item) {
+  let inputArr = input.split(/[ ]/);
+  inputArr = UniqArray(inputArr);
+  const searchArea = document.getElementById("content").innerText;
+  let modHTML = document.getElementById("content").innerHTML;
+  let arraySearch = searchArea.split(/[\s]/);
+  arraySearch = UniqArray(arraySearch);
+  let markArray = {};
+  for (let item of arraySearch) {
+    let elem = item;
+    inputArr.forEach(function(item) {
       const search = "/(" + item + ")/gi";
-      mark_array[i] = mark_array[i].replace(eval(search), function(item) {
+      elem = elem.replace(eval(search), function(item) {
         return "<mark>" + item + "</mark>";
       });
     });
+    if (item != elem) {
+      markArray[item] = elem;
+    }
   }
-  for (let i = 0; i < mark_array.length; i++) {
-    pr = pr.replace(array_search[i], mark_array[i]);
+  for (let key in markArray) {
+    let regexpSearch = "/(" + key + ")/g";
+    console.log(regexpSearch);
+    modHTML = modHTML.replace(eval(regexpSearch), markArray[key]);
   }
-  document.getElementById("content").innerHTML = pr;
+  document.getElementById("content").innerHTML = modHTML;
 }
 
 function Change() {
@@ -36,7 +42,7 @@ function Change() {
 }
 
 function ClearSelection() {
-  document.getElementById("content").innerHTML = locale_HTML;
+  document.getElementById("content").innerHTML = localeHTML;
 }
 
 textInput.addEventListener("input", Change);
